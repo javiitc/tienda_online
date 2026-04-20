@@ -1,0 +1,10 @@
+1;Coca Cola 2L;2.50
+2;Agua 1.5L;0.85
+3;Pan;1.20
+4;Leche 1L;1.20
+5;Yogur;0.95
+6;Queso Fresco;4.50
+7;Jamón York;3.80
+8;Huevos;2.80
+9;Aceite de Oliva;5.50
+10;Café;3.20
