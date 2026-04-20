@@ -1,4 +1,5 @@
-package model;
+package Model;
+
 
 public class Product {
     private int id;
@@ -22,4 +23,5 @@ public class Product {
     public String toString() {
         return id + ". " + name + ": " + price + "€";
     }
+
 }
