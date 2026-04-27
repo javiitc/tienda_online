@@ -1,19 +1,17 @@
-import Controller.ShopController;
 import Model.Cart;
 import Model.Catalog;
-import View.ShopView;
+import View.ShopApp;
+import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
         Catalog catalog = new Catalog();
         catalog.productsFromFile("Java/Data/products.txt");
 
-        Cart cart = new Cart();
+        ShopApp.cart        = new Cart();
+        ShopApp.catalog     = catalog;
+        ShopApp.invoicesDir = "Java/Data/Invoices";
 
-        ShopView view = new ShopView();
-
-        ShopController controller = new ShopController(cart, catalog, view);
-
-        controller.start();
+        Application.launch(ShopApp.class, args);
     }
 }

@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
     <title>Recibo de Compra</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 <div class="invoice-box">
-    <header>
-        <div class="company-info">
-            <h1>MI SUPERMERCADO</h1>
-            <p>Calle Falsa 123, Ciudad, España<br>
-                Tel: +34 900 123 456<br>
-                info@misupermercado.com</p>
-        </div>
-        <div class="invoice-details">
-            <h2>RECIBO DE COMPRA</h2>
-            <p><strong>Fecha:</strong> {{FECHA}}</p>
-            <p><strong>Nº de Transacción:</strong> {{ID_TRANSACCION}}</p>
-        </div>
-    </header>
+
+    <table class="header-table">
+        <tr>
+            <td class="company-info">
+                <h1>Supermarket Mamalon</h1>
+                <p>Backrooms, Nivel 11, Región Desconocida<br/>
+                    Tel: +34 900 123 456<br/>
+                    info@supermarketmamalon.com</p>
+            </td>
+            <td class="invoice-details">
+                <h2>RECIBO DE COMPRA</h2>
+                <p><strong>Fecha:</strong> {{FECHA}}</p>
+                <p><strong>N&#xBA; de Transacci&#xF3;n:</strong> {{ID_TRANSACCION}}</p>
+            </td>
+        </tr>
+    </table>
 
     <table class="items-table">
         <thead>
@@ -39,15 +42,16 @@
         <table>
             <tr class="grand-total">
                 <td><strong>TOTAL A PAGAR:</strong></td>
-                <td>{{TOTAL_CARRITO}}€</td>
+                <td>{{TOTAL_CARRITO}}&#x20AC;</td>
             </tr>
         </table>
     </div>
 
-    <footer>
-        <p>¡Gracias por su compra!<br>
-            Conserve este recibo para cualquier cambio o devolución.</p>
-    </footer>
+    <div class="footer">
+        <p>&#xA1;Gracias por su compra!<br/>
+            Conserve este recibo para cualquier cambio o devoluci&#xF3;n.</p>
+    </div>
+
 </div>
 </body>
 </html>

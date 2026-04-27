@@ -1,9 +1,11 @@
 package Model;
 
-import Model.Product;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -71,25 +73,55 @@ public class Cart {
         return products.isEmpty();
     }
 
-    public void checkout(String billsFilePath) {
-        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    public Map<Integer, Product> getProducts() {
+        return products;
+    }
 
-        StringBuilder recibo = new StringBuilder();
-        recibo.append("=== RECIBO ===\n");
-        recibo.append("Fecha: ").append(fecha).append("\n");
+    public Map<Integer, Integer> getQuantities() {
+        return quantities;
+    }
+
+    public void checkout(String invoicesDir) {
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        String txId  = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+
+        StringBuilder rows = new StringBuilder();
         for (int id : products.keySet()) {
             Product p = products.get(id);
             int qty = quantities.get(id);
-            recibo.append(String.format("%s x%d — %.2f€%n", p.getName(), qty, p.getPrice() * qty));
+            double lineTotal = p.getPrice() * qty;
+            rows.append(String.format(
+                "<tr><td>%s</td><td class=\"text-right\">%.2f&#x20AC;</td><td class=\"text-center\">%d</td><td class=\"text-right\">%.2f&#x20AC;</td></tr>%n",
+                p.getName(), p.getPrice(), qty, lineTotal
+            ));
         }
-        recibo.append(String.format("TOTAL: %.2f€%n", getTotal()));
-        recibo.append("==============\n");
 
-        try (FileWriter fw = new FileWriter(billsFilePath, true)) {
-            fw.write(recibo.toString());
-            System.out.println("Compra realizada. Recibo guardado en " + billsFilePath);
+        String htmlContent;
+        try {
+            htmlContent = new String(Files.readAllBytes(Paths.get(invoicesDir + "/invoice.html")));
         } catch (IOException e) {
-            System.out.println("Error al guardar el recibo: " + e.getMessage());
+            System.out.println("Error: No se pudo leer la plantilla HTML.");
+            return;
+        }
+
+        htmlContent = htmlContent
+            .replace("{{FECHA}}", fecha)
+            .replace("{{ID_TRANSACCION}}", txId)
+            .replace("{{FILAS_PRODUCTOS}}", rows.toString())
+            .replace("{{TOTAL_CARRITO}}", String.format("%.2f", getTotal()));
+
+        String pdfPath = invoicesDir + "/recibo_" + txId + ".pdf";
+        try (FileOutputStream os = new FileOutputStream(pdfPath)) {
+            String baseUri = Paths.get(invoicesDir).toAbsolutePath().toUri().toString() + "/";
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFastMode();
+            builder.withHtmlContent(htmlContent, baseUri);
+            builder.toStream(os);
+            builder.run();
+            System.out.println("Recibo generado: " + pdfPath);
+            java.awt.Desktop.getDesktop().open(new java.io.File(pdfPath));
+        } catch (Exception e) {
+            System.out.println("Error al generar el PDF: " + e.getMessage());
         }
 
         products.clear();

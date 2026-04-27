@@ -36,12 +36,11 @@ public class ShopController {
                         removeProduct();
                         break;
                     case 4:
-                        checkout();
-                        running = false;
+                        if (checkout()) running = false;
                         break;
                     case 5:
                         System.out.println("Saliendo sin comprar. Hasta pronto!");
-                        running = false; // Stops the loop
+                        running = false;
                         break;
                     default:
                         System.out.println("Opción inválida. Por favor, elige del 1 al 5.");
@@ -53,18 +52,21 @@ public class ShopController {
     }
 
     private void addProduct() {
-        view.displayCatalog(catalog.getAvailableProducts());
-        System.out.println("Introduce el ID del producto que deseas añadir:");
+        boolean adding = true;
+        while (adding) {
+            view.displayCatalog(catalog.getAvailableProducts());
+            System.out.println("Introduce el ID del producto que deseas añadir (0 para volver al menú):");
 
-        try {
-            int id = Integer.parseInt(view.getUserInput());
-
-            Product selectedProduct = catalog.getProductById(id);
-
-            cart.addProduct(selectedProduct);
-
-        } catch (NumberFormatException e) {
-            System.out.println("Error: El ID debe ser un número.");
+            try {
+                int id = Integer.parseInt(view.getUserInput());
+                if (id == 0) {
+                    adding = false;
+                } else {
+                    cart.addProduct(catalog.getProductById(id));
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error: El ID debe ser un número.");
+            }
         }
     }
 
@@ -78,11 +80,12 @@ public class ShopController {
         }
     }
 
-    private void checkout() {
+    private boolean checkout() {
         if (cart.isEmpty()) {
             System.out.println("El carrito está vacío, no hay nada que pagar.");
-        } else {
-            cart.checkout("Java/Data/bills.txt");
+            return false;
         }
+        cart.checkout("Java/Data/Invoices");
+        return true;
     }
 }
